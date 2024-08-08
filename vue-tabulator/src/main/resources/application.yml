@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: vue-tabulator
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost/tabulator
+    username: root
+    password: 1234
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
