@@ -1,77 +1,85 @@
 <script setup>
-import { ref } from "vue";
-import TabulatorGrid from "components/TabulatorGrid.vue";
+import { ref, reactive, onMounted, toRaw } from "vue";
+import { TabulatorFull as Tabulator } from "tabulator-tables"; //import Tabulator library
 import axios from "axios";
 
 //define data
-const columns = [
-  {
-    title: "No.",
-    field: "rownum",
-    formatter: "rownum",
-    width: 50,
-  },
-  {
-    formatter: "rowSelection",
-    titleFormatter: "rowSelection",
-    headerSort: false,
-    width: 20,
-  },
-  {
-    title: "Id",
-    field: "id",
-    sorter: "string",
-    width: 200,
-  },
-  {
-    title: "Name",
-    field: "name",
-    sorter: "string",
-    width: 200,
-    editor: "input",
-  },
-  {
-    title: "Age",
-    field: "age",
-    sorter: "number",
-    editor: "number",
-    hozAlign: "center",
-  },
-];
 const rows = ref([
-  // {
-  //   id: "id1",
-  //   name: "Oli Bob",
-  //   age: 12,
-  // },
-  // {
-  //   id: "id2",
-  //   name: "Mary May",
-  //   age: 1,
-  // },
-  // {
-  //   id: "id3",
-  //   name: "Christine Lobowski",
-  //   age: 42,
-  // },
-  // {
-  //   id: "id4",
-  //   name: "Brendon Philips",
-  //   age: 100,
-  // },
-  // {
-  //   id: "id5",
-  //   name: "Margret Marmajuke",
-  //   age: 16,
-  // },
+  {
+    id: "id1",
+    name: "Oli Bob",
+    age: 12,
+  },
+  {
+    id: "id2",
+    name: "Mary May",
+    age: 1,
+  },
+  {
+    id: "id3",
+    name: "Christine Lobowski",
+    age: 42,
+  },
+  {
+    id: "id4",
+    name: "Brendon Philips",
+    age: 100,
+  },
+  {
+    id: "id5",
+    name: "Margret Marmajuke",
+    age: 16,
+  },
 ]);
 
-axios.get("/api/users").then((res) => {
-  rows.value = res.data;
-});
+const table = ref(null);
+const tabulator = ref(null);
 
-/*
 onMounted(() => {
+  //Build Tabulator
+  tabulator.value = new Tabulator(table.value, {
+    height: "311px",
+    layout: "fitColumns",
+    reactiveData: true, //turn on data reactivity
+    data: toRaw(rows.value), //load data into table
+    columns: [
+      {
+        title: "No.",
+        field: "rownum",
+        formatter: "rownum",
+        width: 50,
+      },
+      {
+        formatter: "rowSelection",
+        titleFormatter: "rowSelection",
+        headerSort: false,
+        width: 20,
+      },
+      {
+        title: "Id",
+        field: "id",
+        sorter: "string",
+        width: 200,
+      },
+      {
+        title: "Name",
+        field: "name",
+        sorter: "string",
+        width: 200,
+        editor: "input",
+      },
+      {
+        title: "Age",
+        field: "age",
+        sorter: "number",
+        editor: "number",
+        hozAlign: "center",
+      },
+    ],
+    pagination: true,
+    paginationCounter: "rows",
+  });
+
   // row click event
   tabulator.value.on("rowClick", (e, row) => {
     console.log(rows.value[0].name);
@@ -120,7 +128,6 @@ function deleteRow() {
 function updateRow() {
   rows.value[0].name = "IVE BEEN UPDATED";
 }
-  */
 </script>
 
 <template>
@@ -134,5 +141,9 @@ function updateRow() {
     <button @click="addRows">Add New Rowss</button>
   </div>
 
-  <tabulator-grid :columns="columns" :rows="rows" height="400px" />
+  <div ref="table"></div>
 </template>
+
+<style>
+@import "~/tabulator-tables/dist/css/tabulator.min.css";
+</style>
