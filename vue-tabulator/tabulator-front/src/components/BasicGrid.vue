@@ -119,11 +119,15 @@ function updateFooter() {
 // );
 
 function setData(newData) {
-  if (tabulator.value) {
-    tabulator.value.setData(newData);
-  } else {
-    console.error("Tabulator instance is not initialized");
-  }
+  tabulator.value
+    .setData(newData)
+    .then(() => {
+      console.log("Data successfully set.");
+      if (props.footer) updateFooter();
+    })
+    .catch((error) => {
+      console.error("Error setting data:", error);
+    });
 }
 
 function updateOrAdd(newRows) {
