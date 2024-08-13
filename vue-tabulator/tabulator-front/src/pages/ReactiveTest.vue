@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import Grid from "components/ReactivityGrid.vue";
+import Grid from "components/ReactiveGrid.vue";
 
 const columns = [
   {
@@ -81,8 +81,6 @@ const rows = ref([
   },
 ]);
 
-const gridRef = ref(null);
-
 let id = 2;
 function addEmptyRow() {
   rows.value.push({ id: `#Cust${id++}` });
@@ -108,7 +106,7 @@ function deleteRows() {
 <template>
   <div>
     <div class="q-pa-sm">
-      <span>Reactivity Page</span>
+      <span>Reactive Page</span>
       <div class="row q-mt-xs">
         <q-btn class="q-mr-xs" label="행 추가" @click="addEmptyRow" />
         <q-btn class="q-mr-xs" label="삭제" @click="deleteRows" />

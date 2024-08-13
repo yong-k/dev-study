@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, toRaw, toRef } from "vue";
+import { ref, onMounted, watch, toRaw, toRef, onUpdated } from "vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 
 const props = defineProps({
@@ -56,10 +56,14 @@ watch(
   (newRows) => {
     console.log("watch newRows");
     if (props.footer) updateFooter();
-    // tabulator.value.setData(newRows);
+    tabulator.value.setData(newRows);
   },
   { deep: true }
 );
+
+onUpdated(() => {
+  console.log("up");
+});
 
 function updateFooter() {
   const footer = document.querySelector(".grid-footer");

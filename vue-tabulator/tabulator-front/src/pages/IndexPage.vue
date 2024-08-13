@@ -2,11 +2,14 @@
 import { ref } from "vue";
 import TestPage from "pages/TestPage.vue";
 import OriTest from "pages/OriTest.vue";
-import ReactivityTest from "pages/ReactivityTest.vue";
+import ReactiveTest from "pages/ReactiveTest.vue";
+import BasicTest from "pages/BasicTest.vue";
 </script>
 
 <template>
   <!-- <test-page /> -->
   <!-- <ori-test /> -->
-  <ReactivityTest />
+
+  <!-- <ReactiveTest /> -->
+  <BasicTest />
 </template>
