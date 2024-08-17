@@ -3,7 +3,6 @@ import { ref } from "vue";
 import Grid from "components/BasicGrid.vue";
 
 const columns = [
-  //Define Table Columns
   {
     title: "No.(paging O)",
     field: "rownum",
@@ -34,6 +33,8 @@ const columns = [
     headerHozAlign: "center",
     headerSort: false,
     width: 20,
+    formatter: "rowSelection",
+    titleFormatter: "rowSelection",
   },
   {
     title: "ID",
@@ -284,11 +285,12 @@ function search() {
 
 const gridRef = ref(null);
 ////// add
+let tid = rows.value.length;
 function addRows() {
   const newRows = [];
   for (let inx = 0; inx < 10; inx++) {
     newRows.push({
-      id: `#Cust${rows.value.length + inx}`,
+      id: `#Cust${tid++}`,
       date: "2024-01-01",
       name: `Steve${inx}`,
       country: "USA",
@@ -298,27 +300,38 @@ function addRows() {
       price: 630800 + inx * 100,
     });
   }
-
+  // rows.value에 추가
   rows.value = [...rows.value, ...newRows];
-  gridRef.value.updateOrAdd(rows.value);
+
+  // Grid에 추가
+  gridRef.value.addRows(newRows);
 }
 function addEmptyRow() {
-  // rows.value.push({ id: `#Cust${rows.value.length++}` });
-  rows.value = [...rows.value, { id: `#Cust${rows.value.length++}` }];
+  const newRow = [{ id: `#Cust${tid++}` }];
 
-  gridRef.value.updateOrAdd(rows.value);
+  // rows.value에 추가
+  rows.value = [...rows.value, newRow];
+
+  // Grid에 추가
+  gridRef.value.addRows(newRow);
 }
 
 ////// delete
 const selectedRows = ref([]);
 function rowSelected(selected) {
-  // console.log("selectedId: " + selected.map((row) => row.id));
+  console.log("selectedId: " + selected.map((row) => row.id));
   selectedRows.value = selected;
 }
 function deleteRows() {
   if (!gridRef.value) return;
   const idsToDelete = selectedRows.value.map((row) => row.id);
+
+  // rows.value에서 삭제
+  rows.value = rows.value.filter((row) => !idsToDelete.includes(row.id));
+
+  // Grid에서 삭제
   gridRef.value.deleteRows(idsToDelete);
+
   selectedRows.value = [];
 }
 
@@ -336,6 +349,7 @@ function cellEdited(cell) {
 }
 function editRows() {
   console.log(editedRows.value.forEach((row) => console.log(row.id)));
+  editedRows.value = [];
 }
 
 // 데이터 axios로 다시 받아왔다고 치고
@@ -385,20 +399,7 @@ function refresh() {
       <q-btn label="조회" @click="search" />
     </div>
 
-    <!-- <grid
-      :rows="rows"
-      :columns="columns"
-      height="500px"
-      :filters="filters"
-      movableColumns
-      movableRows
-      @rowClick="rowClicked"
-      @rowSelected="rowSelected"
-      @rowMoved="rowMoved"
-      footer="true"
-    /> -->
-
-    <div class="row q-mt-xs">
+    <div class="row q-my-md">
       <div style="flex-grow: 1"></div>
       <q-btn class="q-mr-xs" label="데이터추가" @click="addRows" />
       <q-btn class="q-mr-xs" label="행 추가" @click="addEmptyRow" />
@@ -407,7 +408,6 @@ function refresh() {
       <q-btn class="q-mr-xs" label="새로고침" @click="refresh" />
     </div>
 
-    <div class="q-mt-md"></div>
     <grid
       ref="gridRef"
       :rows="rows"
@@ -417,8 +417,8 @@ function refresh() {
       movableColumns
       movableRows
       @rowClick="rowClicked"
-      @rowMoved="rowMoved"
       @rowSelected="rowSelected"
+      @rowMoved="rowMoved"
       @cellEdited="cellEdited"
       pagination
       :paginationSize="10"
