@@ -4,12 +4,11 @@ import TestPage from "pages/TestPage.vue";
 import OriTest from "pages/OriTest.vue";
 import ReactiveTest from "pages/ReactiveTest.vue";
 import BasicTest from "pages/BasicTest.vue";
+import AxiosTest from "pages/AxiosTest.vue";
 </script>
 
 <template>
-  <!-- <test-page /> -->
-  <!-- <ori-test /> -->
-
   <!-- <ReactiveTest /> -->
-  <BasicTest />
+  <!-- <BasicTest /> -->
+  <AxiosTest />
 </template>

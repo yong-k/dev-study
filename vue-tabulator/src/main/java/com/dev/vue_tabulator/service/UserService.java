@@ -15,4 +15,8 @@ public class UserService {
     public List<UserVo> getAllUser() {
         return userMapper.getAllUser();
     }
+
+    public int deleteUser(List<String> idList) {
+        return userMapper.deleteUser(idList);
+    }
 }
