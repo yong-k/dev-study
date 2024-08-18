@@ -124,15 +124,25 @@ function setData(newData) {
 }
 
 function addRows(newRows) {
-  tabulator.value
-    .addData(newRows)
-    .then(() => {
-      console.log("Data successfully updated or added.");
-      if (props.footer) updateFooter();
-    })
-    .catch((error) => {
-      console.error("Error updating data:", error);
-    });
+  // 마지막 페이지로 이동
+  const endPage = tabulator.value.getPageMax();
+  tabulator.value.setPage(endPage);
+
+  const pageSize = tabulator.value.getPageSize();
+  const rowCountOfEndPage = tabulator.value.getRows().length % pageSize;
+  let createPageFlag = false;
+
+  // 마지막 페이지 가득 찼으면 새 페이지 생성
+  if (rowCountOfEndPage == 0) {
+    // 새로운 페이지 만드는 메서드 없음
+    // 빈 행을 추가하여 새로운 페이지 생성하고, 나중에 제거
+    createPageFlag = true;
+    tabulator.value.addRow({ id: "create-page-row" });
+    tabulator.value.setPage(endPage + 1);
+  }
+  tabulator.value.addData(newRows);
+  if (createPageFlag) tabulator.value.deleteRow("create-page-row");
+  if (props.footer) updateFooter();
 }
 
 function deleteRows(idsToDelete) {

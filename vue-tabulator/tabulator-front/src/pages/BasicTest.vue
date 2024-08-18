@@ -35,6 +35,9 @@ const columns = [
     width: 20,
     formatter: "rowSelection",
     titleFormatter: "rowSelection",
+    headerClick: function (e, column) {
+      console.log("cl");
+    },
   },
   {
     title: "ID",
@@ -286,26 +289,6 @@ function search() {
 const gridRef = ref(null);
 ////// add
 let tid = rows.value.length;
-function addRows() {
-  const newRows = [];
-  for (let inx = 0; inx < 10; inx++) {
-    newRows.push({
-      id: `#Cust${tid++}`,
-      date: "2024-01-01",
-      name: `Steve${inx}`,
-      country: "USA",
-      product: "IPad Air",
-      color: "Green",
-      quantity: 20 + inx,
-      price: 630800 + inx * 100,
-    });
-  }
-  // rows.value에 추가
-  rows.value = [...rows.value, ...newRows];
-
-  // Grid에 추가
-  gridRef.value.addRows(newRows);
-}
 function addEmptyRow() {
   const newRow = [{ id: `#Cust${tid++}` }];
 
@@ -401,8 +384,7 @@ function refresh() {
 
     <div class="row q-my-md">
       <div style="flex-grow: 1"></div>
-      <q-btn class="q-mr-xs" label="데이터추가" @click="addRows" />
-      <q-btn class="q-mr-xs" label="행 추가" @click="addEmptyRow" />
+      <q-btn class="q-mr-xs" label="추가" @click="addEmptyRow" />
       <q-btn class="q-mr-xs" label="삭제" @click="deleteRows" />
       <q-btn class="q-mr-xs" label="저장" @click="editRows" />
       <q-btn class="q-mr-xs" label="새로고침" @click="refresh" />
