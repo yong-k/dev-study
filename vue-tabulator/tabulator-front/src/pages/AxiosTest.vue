@@ -95,23 +95,24 @@ const columns = [
   },
 ];
 
-// 초기 data setting
+// set data
 const rows = ref([]);
-const tid = ref(); // add - testId variable
-onMounted(async () => {
+async function fetchData() {
   await axios
     .get("/api/users")
     .then((res) => {
       rows.value = res.data;
+      gridRef.value.setData(rows.value);
     })
     .catch((err) => {
       console.error("Failed to fetch data", err);
     });
+}
 
+const tid = ref(); // add - testId variable
+onMounted(async () => {
+  await fetchData();
   tid.value = rows.value.length + 1;
-
-  // set initial data
-  gridRef.value.setData(rows.value);
 });
 
 // click row
@@ -173,18 +174,23 @@ function rowSelected(selected) {
 }
 function deleteRows() {
   if (!gridRef.value) return;
+
+  if (selectedRows.value.length == 0) {
+    alert("선택된 항목이 없습니다.");
+    return;
+  }
+
   const idList = selectedRows.value.map((row) => row.id);
 
-  // rows.value에서 삭제
-  // rows.value = rows.value.filter((row) => !idsToDelete.includes(row.id));
-
-  // Grid에서 삭제
-  // gridRef.value.deleteRows(idsToDelete);
-
-  axios.delete("/api/users", { data: idList }).then((res) => {
-    // gridRef.value.setData(rows.value);
-    gridRef.value.redraw();
-  });
+  axios
+    .delete("/api/users", { data: idList })
+    .then((res) => {
+      if (res.data > 0) fetchData();
+      else alert("삭제 오류 msg");
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 
   selectedRows.value = [];
 }
@@ -229,15 +235,16 @@ const refreshData = [
     price: 630800,
   },
 ];
-function refresh() {
-  rows.value = refreshData;
-  gridRef.value.setData(rows.value);
+async function refresh() {
+  // rows.value = refreshData;
+  // gridRef.value.setData(rows.value);
+  await fetchData();
 }
 </script>
 
 <template>
   <div class="q-pa-sm">
-    <span>BASIC Page</span>
+    <span>AXIOS Page</span>
     <div class="row items-center q-gutter-md no-wrap q-mb-sm">
       <span>ID</span>
       <q-input v-model="id" />
