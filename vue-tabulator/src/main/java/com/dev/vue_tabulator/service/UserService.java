@@ -16,6 +16,18 @@ public class UserService {
         return userMapper.getAllUser();
     }
 
+    public int findById(String id) {
+        return userMapper.findById(id);
+    }
+
+    public int addUser(UserVo user) {
+        return userMapper.addUser(user);
+    }
+
+    public int updateUser(UserVo user) {
+        return userMapper.updateUser(user);
+    }
+
     public int deleteUser(List<String> idList) {
         return userMapper.deleteUser(idList);
     }

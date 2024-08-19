@@ -75,6 +75,7 @@ const columns = [
   {
     title: "Price",
     field: "price",
+    editor: "input",
     formatter: function (cell) {
       const value = cell.getValue();
       const formattedValue = new Intl.NumberFormat("ko-KR", {
@@ -152,18 +153,42 @@ function search() {
   }
   filters.value = newFilters;
 }
+function reset() {
+  filters.value = [];
+}
 
 const gridRef = ref(null);
-////// add
-// const tid = ref(rows.value.length);
+////// add empty row
 function addEmptyRow() {
   const newRow = [{ id: `Cust${tid.value++}` }];
-
-  // rows.value에 추가
-  rows.value = [...rows.value, newRow];
-
-  // Grid에 추가
   gridRef.value.addRows(newRow);
+}
+
+////// save add/update content
+const editedRows = ref([]);
+function cellEdited(cell) {
+  // console.log("edited content:" + cell.getValue());
+  // console.log("edited row's id: " + cell.getData().id);
+
+  const rowData = cell.getData();
+
+  // 중복된 id인 row가 있다면 기존row 제거하고 최신row로 push
+  editedRows.value = editedRows.value.filter((item) => item.id !== rowData.id);
+  editedRows.value.push(rowData);
+}
+function save() {
+  if (editedRows.value.length == 0) return;
+
+  axios
+    .post("/api/users", editedRows.value)
+    .then((res) => {
+      fetchData();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+  editedRows.value = [];
 }
 
 ////// delete
@@ -173,15 +198,12 @@ function rowSelected(selected) {
   selectedRows.value = selected;
 }
 function deleteRows() {
-  if (!gridRef.value) return;
-
   if (selectedRows.value.length == 0) {
     alert("선택된 항목이 없습니다.");
     return;
   }
 
   const idList = selectedRows.value.map((row) => row.id);
-
   axios
     .delete("/api/users", { data: idList })
     .then((res) => {
@@ -195,50 +217,8 @@ function deleteRows() {
   selectedRows.value = [];
 }
 
-////// update
-const editedRows = ref([]);
-function cellEdited(cell) {
-  // console.log("edited content:" + cell.getValue());
-  // console.log("edited row's id: " + cell.getData().id);
-
-  const rowData = cell.getData();
-
-  // 중복된 id인 row가 있다면 기존row 제거하고 최신row로 push
-  editedRows.value = editedRows.value.filter((item) => item.id !== rowData.id);
-  editedRows.value.push(rowData);
-}
-function editRows() {
-  console.log(editedRows.value.forEach((row) => console.log(row.id)));
-  editedRows.value = [];
-}
-
-// 데이터 axios로 다시 받아왔다고 치고
-const refreshData = [
-  {
-    id: "#Cust0",
-    date: "2014-10-01",
-    name: "홍T",
-    country: "Korea",
-    product: "IPad Air",
-    color: "Red",
-    quantity: 50,
-    price: 3630700,
-  },
-  {
-    id: `#Cust1`,
-    date: "2024-01-01",
-    name: "ST",
-    country: "USA",
-    product: "IPad Air",
-    color: "Green",
-    quantity: 20,
-    price: 630800,
-  },
-];
-async function refresh() {
-  // rows.value = refreshData;
-  // gridRef.value.setData(rows.value);
-  await fetchData();
+function refresh() {
+  fetchData();
 }
 </script>
 
@@ -258,13 +238,14 @@ async function refresh() {
       <q-input v-model="name" />
 
       <q-btn label="조회" @click="search" />
+      <q-btn label="초기화" @click="reset" />
     </div>
 
     <div class="row q-my-md">
       <div style="flex-grow: 1"></div>
       <q-btn class="q-mr-xs" label="추가" @click="addEmptyRow" />
       <q-btn class="q-mr-xs" label="삭제" @click="deleteRows" />
-      <q-btn class="q-mr-xs" label="저장" @click="editRows" />
+      <q-btn class="q-mr-xs" label="저장" @click="save" />
       <q-btn class="q-mr-xs" label="새로고침" @click="refresh" />
     </div>
 

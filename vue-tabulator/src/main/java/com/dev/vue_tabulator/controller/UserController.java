@@ -18,6 +18,16 @@ public class UserController {
         return userService.getAllUser();
     }
 
+    @PostMapping("/users")
+    public void save (@RequestBody List<UserVo> userList) {
+        for (UserVo user : userList) {
+            int isExist = userService.findById(user.getId());
+            if (isExist == 0) userService.addUser(user);
+            else userService.updateUser(user);
+
+        }
+    }
+
     @DeleteMapping("/users")
     public int deleteUser(@RequestBody List<String> idList) {
         return userService.deleteUser(idList);

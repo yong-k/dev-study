@@ -79,8 +79,32 @@ onMounted(() => {
   });
 });
 
+///////////////
+function getCurrentPageData() {
+  // 현재 페이지 번호를 가져오기
+  const currentPage = tabulator.value.getPage();
+
+  // 페이지 당 행 개수를 가져오기
+  const pageSize = tabulator.value.getPageSize();
+
+  // 모든 행 데이터를 가져오기
+  const allData = tabulator.value.getData();
+
+  // 현재 페이지의 데이터만 필터링
+  const start = (currentPage - 1) * pageSize;
+  const end = currentPage * pageSize;
+  const currentPageData = allData.slice(start, end);
+
+  return currentPageData;
+}
+///////////////
 // checkbox 선택된 모든 행의 데이터 가져오기
 function updateSelectedRows() {
+  const selectedCount = tabulator.value.getSelectedData().length;
+  const totalCount = tabulator.value.getData().length;
+
+  console.log("now: " + getCurrentPageData.length);
+
   emit("rowSelected", tabulator.value.getSelectedData());
 }
 
@@ -99,17 +123,6 @@ function updateFooter() {
     footer.innerHTML = `1-${totalRows.value} of ${totalRows.value}`;
   }
 }
-
-// watch(
-//   () => props.rows,
-//   (newRows) => {
-//     tabulator.value.setData(newRows).then(() => {
-//       console.log("new");
-//       updateFooter();
-//       // tabulator.value.redraw();
-//     });
-//   }
-// );
 
 function setData(newData) {
   tabulator.value
@@ -132,16 +145,27 @@ function addRows(newRows) {
   const rowCountOfEndPage = tabulator.value.getRows().length % pageSize;
   let createPageFlag = false;
 
+  /*
+   * issue: pagination 사용할 때 새로운 행 추가하면, 맨 뒤에 추가되는게 아니라
+   *        현재 page 마지막에 추가되면서 기존 행을 뒷 페이지로 밀어낸다.
+   * → 새로운 페이지 만드는 기능 없어서 코드로 구현
+   * → 1) 빈 행을 추가하여 새로운 페이지 생성
+   *   2) 새로운 행 추가
+   *   3) 추가했던 빈 행 제거
+   *   4) rownum 밀리는 문제 발생해서 데이터 reload[replaceData()]
+   */
   // 마지막 페이지 가득 찼으면 새 페이지 생성
   if (rowCountOfEndPage == 0) {
-    // 새로운 페이지 만드는 메서드 없음
-    // 빈 행을 추가하여 새로운 페이지 생성하고, 나중에 제거
     createPageFlag = true;
     tabulator.value.addRow({ id: "create-page-row" });
     tabulator.value.setPage(endPage + 1);
   }
   tabulator.value.addData(newRows);
   if (createPageFlag) tabulator.value.deleteRow("create-page-row");
+
+  // 데이터를 다시 로드하여 rownum 문제 해결
+  tabulator.value.replaceData(tabulator.value.getData());
+
   if (props.footer) updateFooter();
 }
 
@@ -158,13 +182,8 @@ function deleteRows(idsToDelete) {
   });
 }
 
-function redraw() {
-  tabulator.value.redraw();
-}
-
 defineExpose({
   setData,
-  redraw,
   addRows,
   deleteRows,
 });

@@ -3,9 +3,27 @@
 <mapper namespace="com.dev.vue_tabulator.mapper.UserMapper" >
 
     <select id="getAllUser" resultType="com.dev.vue_tabulator.vo.UserVo">
-        SELECT u.*
-        FROM `user` u
+        SELECT *
+        FROM `user`
+        ORDER BY CAST(substring(id, 5) AS int)
     </select>
+
+    <select id="findById" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM `user`
+        WHERE id = #{id}
+    </select>
+
+    <insert id="addUser">
+        INSERT INTO `user` (id, name, `Date`, Quantity, Price)
+        VALUES (#{id}, #{name}, #{date}, #{quantity}, #{price})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE `user`
+        SET name = #{name}, date = #{date}, quantity = #{quantity}, price = #{price}
+        WHERE id = #{id}
+    </update>
 
     <delete id="deleteUser">
         DELETE FROM `user`
