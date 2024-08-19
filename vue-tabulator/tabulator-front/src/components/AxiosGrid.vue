@@ -79,32 +79,8 @@ onMounted(() => {
   });
 });
 
-///////////////
-function getCurrentPageData() {
-  // 현재 페이지 번호를 가져오기
-  const currentPage = tabulator.value.getPage();
-
-  // 페이지 당 행 개수를 가져오기
-  const pageSize = tabulator.value.getPageSize();
-
-  // 모든 행 데이터를 가져오기
-  const allData = tabulator.value.getData();
-
-  // 현재 페이지의 데이터만 필터링
-  const start = (currentPage - 1) * pageSize;
-  const end = currentPage * pageSize;
-  const currentPageData = allData.slice(start, end);
-
-  return currentPageData;
-}
-///////////////
 // checkbox 선택된 모든 행의 데이터 가져오기
 function updateSelectedRows() {
-  const selectedCount = tabulator.value.getSelectedData().length;
-  const totalCount = tabulator.value.getData().length;
-
-  console.log("now: " + getCurrentPageData.length);
-
   emit("rowSelected", tabulator.value.getSelectedData());
 }
 
