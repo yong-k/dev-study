@@ -1,12 +1,9 @@
 <script setup>
-import { ref } from "vue";
 import ReactiveTest from "pages/ReactiveTest.vue";
-import BasicTest from "pages/BasicTest.vue";
-import AxiosTest from "pages/AxiosTest.vue";
+import SampleTest from "pages/SampleTest.vue";
 </script>
 
 <template>
-  <ReactiveTest />
-  <!-- <BasicTest /> -->
-  <!-- <AxiosTest /> -->
+  <!-- <ReactiveTest /> -->
+  <SampleTest />
 </template>
