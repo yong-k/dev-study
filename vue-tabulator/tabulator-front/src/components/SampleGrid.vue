@@ -7,6 +7,76 @@ import * as XLSX from "xlsx";
 window.luxon = luxon;
 window.XLSX = XLSX;
 
+/****************************** [Props] ******************************
+ * rows: Array - required
+ *    - 표시할 row 데이터
+ *    Examples) :rows="gridRows"
+ *
+ * columns: Array - required
+ *    - column 정의 (객체 배열)
+ *    Examples) :columns="gridColumns"
+ *
+ * height: String
+ *    Examples) '300' '300px' '50em' ..
+ *
+ * minHeight: String
+ *    Examples) '300' '300px' '50em' ..
+ *
+ * maxHeight: String
+ *    Examples) '300' '300px' '50em' ..
+ *
+ * filters: Array
+ *    - 검색 필터 정의 (객체 배열)
+ *    - Props
+ *      · field: 컬럼명
+ *      · type: '=' '!=' 'like' '<=' '>=' '<' '>' 'in' ...
+ *      · value: String, Integer, Array ...
+ *    Examples) [{ field: "date", type: ">=", value: "2023-05-01" },
+ *               { field: "date", type: "<=", value: "2024-05-01" },
+ *               { field: "age", type:"<", value: 10 },
+ *               { field: "name", type: "like", value: "Steve" }]
+ *    참고) https://tabulator.info/docs/6.2/filter#search-data
+ *
+ * movableColumns: Boolean
+ *    - column 좌우 이동
+ *
+ * movableRows: Boolean
+ *    - row 상하 이동
+ *
+ * pagination: Boolean
+ *    - pagination 사용 여부
+ *
+ * paginationSize: Number
+ *    - pagination 사용할 경우, 한 페이지당 표시할 row 수
+ *
+ * footer: Boolean
+ *    - pagination 사용하지 않으면서 table footer 표시하고 싶을 때 사용
+ ***********************************************************************/
+
+/****************************** [Events] ******************************
+ * @rowClick : (e, row) => void
+ *    - row 클릭했을 때 emit
+ *    - Parameters
+ *      · e   : Event   → JS event object
+ *      · row : Object  → 클릭한 row
+ *
+ * @rowSelected : (selectedRows) => void
+ *    - checkbox 선택/해제했을 때 emit
+ *    - Parameters
+ *      · selectedRows : Object[] → 체크박스가 선택된 모든 row의 배열
+ *
+ * @rowMoved : (e, row) => void
+ *    - row 이동했을 때 emit
+ *    - Parameters
+ *      · e   : Event   → JS event object
+ *      · row : Object  → 이동된 row
+ *
+ * @cellEdited : (cell) => void
+ *    - cell 수정했을 때 emit
+ *    - Parameters
+ *      · cell : Object → 수정된 cell
+ ***********************************************************************/
+
 const props = defineProps({
   rows: { type: Array, required: true },
   columns: { type: Array, required: true },
@@ -18,10 +88,10 @@ const props = defineProps({
   movableRows: Boolean,
   pagination: Boolean,
   paginationSize: { type: Number, default: 30 },
-  footer: { type: Boolean, default: false },
+  footer: Boolean,
 });
 
-// event
+// Events
 const emit = defineEmits(["rowClick", "rowSelected", "rowMoved", "cellEdited"]);
 
 const table = ref(null);
@@ -69,7 +139,7 @@ onMounted(() => {
   tabulator.value.on("rowDeselected", updateSelectedRows);
 
   // event: row 이동
-  tabulator.value.on("rowMoved", (row) => {
+  tabulator.value.on("rowMoved", (e, row) => {
     emit("rowMoved", row.getData());
   });
 
