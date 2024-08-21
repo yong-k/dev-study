@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: vue_tabulator_jpa
+  datasource:
+    driver-class-name: org.mariadb.jdbc.driver
+    url: jdbc:mariadb://localhost/tabulator
+    username: root
+    password: 1234
