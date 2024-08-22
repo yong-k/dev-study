@@ -43,6 +43,9 @@ window.XLSX = XLSX;
  * movableRows: Boolean
  *    - row 상하 이동
  *
+ * selectableRows: Number
+ *    - (checkbox) 최대 select할 수 있는 row 수
+ *
  * pagination: Boolean
  *    - pagination 사용 여부
  *
@@ -86,6 +89,7 @@ const props = defineProps({
   filters: Array,
   movableColumns: Boolean,
   movableRows: Boolean,
+  selectableRows: Number,
   pagination: Boolean,
   paginationSize: { type: Number, default: 30 },
   footer: Boolean,
@@ -111,6 +115,7 @@ onMounted(() => {
     movableColumns: props.movableColumns,
     movableRows: props.movableRows,
     placeholder: "검색 결과가 없습니다.",
+    selectableRows: props.selectableRows, // checkbox 선택할 수 있는 row 제한
     pagination: props.pagination,
     paginationSize: props.paginationSize,
     paginationSizeSelector: true,

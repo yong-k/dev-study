@@ -28,13 +28,12 @@ const columns = [
   },
   {
     formatter: "rowSelection",
-    titleFormatter: "rowSelection",
+    // titleFormatter: "rowSelection",  // 헤더 체크박스 사용 (전체선택)
+    titleFormatter: null, // 헤더 체크박스 없앰
     hozAlign: "center",
     headerHozAlign: "center",
     headerSort: false,
     width: 20,
-    formatter: "rowSelection",
-    titleFormatter: "rowSelection",
   },
   {
     title: "ID",
@@ -256,6 +255,7 @@ function cellEdited(cell) {
         :filters="filters"
         movableColumns
         movableRows
+        :selectableRows="1"
         @rowClick="rowClicked"
         @rowSelected="rowSelected"
         @rowMoved="rowMoved"
