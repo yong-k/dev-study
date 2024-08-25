@@ -1,0 +1,9 @@
+spring.application.name=jpa-blog
+spring:
+  application:
+    name=jpa-blog
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost/blog
+    username: root
+    password: 1234
